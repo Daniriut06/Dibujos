@@ -54,14 +54,39 @@ public abstract class Trazo {
         return Math.abs(y2 - y1) + 1;
     }
 
-    public int getXminimo(){
+    public int getXminimo() {
         return Math.min(x1, x2);
     }
 
-    public int getYminimo(){
+    public int getYminimo() {
         return Math.min(y1, y2);
     }
 
+    public abstract void dibujar(Graphics g, Color color, Estado estado);
 
-    public abstract void dibujar(Graphics g, Color color);
+    public abstract boolean cercano(int x, int y);
+
+    public static int TOLERANCIA = 5;
+
+    public static boolean esCercanoALinea(int x, int y, int x1, int y1, int x2, int y2) {
+        double distancia = distanciaALinea(x, y, x1, y1, x2, y2);
+        return distancia < TOLERANCIA;
+    }
+
+    private static double distanciaALinea(int x, int y, int x1, int y1, int x2, int y2) {
+        double px = x2 - x1;
+        double py = y2 - y1;
+        double temp = (px * px) + (py * py);
+        double u = ((x - x1) * px + (y - y1) * py) / temp;
+
+        u = u > 1 ? 1 : u < 0 ? 0 : u;
+        double xCerca = x1 + u * px;
+        double yCerca = y1 + u * py;
+
+        double dx = x - xCerca;
+        double dy = y - yCerca;
+
+        return Math.sqrt(dx * dx + dy * dy);
+
+    }
 }

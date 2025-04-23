@@ -31,7 +31,7 @@ public class FrmEditor extends JFrame {
     private JToolBar tbEditor;
     private JPanel pnlGrafica;
 
-    Estado estado;
+
     int x;
     int y;
     Color color;
@@ -178,7 +178,7 @@ public class FrmEditor extends JFrame {
         nombreArchivo = Archivo.elegirArchivo();
         if(!nombreArchivo.equals("")){
             dibujo.desdeJSON(nombreArchivo);
-            dibujo.dibujar(pnlGrafica);
+            dibujo.dibujar(pnlGrafica, estado);
         }
     }
 
@@ -192,7 +192,7 @@ public class FrmEditor extends JFrame {
     }
 
     private void seleccionarTrazo() {
-
+        estado = Estado.SELECCIONANDO;
     }
 
     private void eliminarTrazo() {
@@ -203,13 +203,13 @@ public class FrmEditor extends JFrame {
 
     }
 
-    boolean dibujando = false;
+   Estado estado = Estado.NADA;
 
     Dibujo dibujo = new Dibujo();
 
     private void pnlGraficaMouseClicked(MouseEvent me) {
-        if (dibujando) {
-            dibujando = false;
+        if (estado == Estado.TRAZANDO) {
+            estado = Estado.NADA;
             Graphics g = pnlGrafica.getGraphics();
             g.setColor(color);
             
@@ -232,18 +232,18 @@ public class FrmEditor extends JFrame {
             }
             if (trazo != null){
                 dibujo.agregar(new Nodo(trazo, color));
-                dibujo.dibujar(pnlGrafica);
+                dibujo.dibujar(pnlGrafica, estado);
             }
 
         } else {
-            dibujando = true;
+            estado = Estado.TRAZANDO;
             x = me.getX();
             y = me.getY();
         }
     }
 
     private void pnlGraficaMouseMoved(MouseEvent me) {
-        if (dibujando){
+        if (estado == Estado.TRAZANDO){
             Trazo trazo = null;
             switch (cmbTipo.getSelectedIndex()) {
 
@@ -261,11 +261,16 @@ public class FrmEditor extends JFrame {
                 
             }
             if (trazo != null){
-                dibujo.dibujar(pnlGrafica);
-                trazo.dibujar(pnlGrafica.getGraphics(), color);
+                dibujo.dibujar(pnlGrafica, estado);
+                trazo.dibujar(pnlGrafica.getGraphics(), color, estado);
             }
             
 
+        }
+        else if (estado == Estado.SELECCIONANDO){
+            if (dibujo.seleccionar(me.getX(), me.getY())){
+
+            }
         }
     }
 

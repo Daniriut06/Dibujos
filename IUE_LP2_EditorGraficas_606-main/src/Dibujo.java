@@ -10,6 +10,7 @@ import entidades.TrazoDTO;
 
 public class Dibujo {
     private Nodo cabeza;
+    private Nodo nodoSeleccionado; 
 
     public Dibujo() {
         cabeza = null;
@@ -42,14 +43,14 @@ public class Dibujo {
         return totalNodos;
     }
 
-    public void dibujar(JPanel pnl) {
+    public void dibujar(JPanel pnl, Estado estado) {
         limpiarPanel(pnl);
         // obtener el objeto graficador
         Graphics g = pnl.getGraphics();
         // recorrer lista
         Nodo actual = cabeza;
         while (actual != null) {
-            actual.getTrazo().dibujar(g, actual.getColor());
+            actual.getTrazo().dibujar(g, actual.getColor(), estado);
             actual = actual.siguiente;
         }
     }
@@ -91,6 +92,22 @@ public class Dibujo {
             }
         }
         
+    }
+
+    public boolean seleccionar (int x, int y){
+        boolean seleccionado = false;
+        Nodo actual = cabeza;
+
+        while (actual != null && !seleccionado){
+            seleccionado = actual.getTrazo().cercano(x, y);
+            actual = actual.siguiente;
+        }
+        
+        
+        return seleccionado;
+
+        
+
     }
 
     // ********** Metodos Estaticos **********
